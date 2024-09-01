@@ -8,8 +8,13 @@ public class Offer implements IOffer {
         this.code = code;
         this.discountPercentage = discountPercentage;
     }
+
     @Override
     public Double calculateDiscount(Double cost) {
         return cost * discountPercentage / 100;
+    }
+
+    public boolean isValid(String offerCode) {
+        return offerCode.equals(code);
     }
 }
