@@ -21,7 +21,7 @@ public class ShipmentPackage {
         this.distanceInKm = distanceInKm;
     }
 
-    public void apply(Offer sheepmentOffer) {
+    public void applyOffer(Offer sheepmentOffer) {
         offers.add(sheepmentOffer);
     }
 

@@ -18,7 +18,7 @@ class ShipmentPackageTest {
     public void shouldCalculateDeliveryCostAfterOfferIsApplied() {
         ShipmentPackage shipmentPackage = new ShipmentPackage("PKG1", 100.00, 15, 5);
         Offer ofr001 = new Offer("OFR001", 10);
-        shipmentPackage.apply(ofr001);
+        shipmentPackage.applyOffer(ofr001);
         Double deliveryCost = shipmentPackage.calculateDeliveryCost();
         assertEquals(247.5, deliveryCost);
     }
@@ -28,8 +28,8 @@ class ShipmentPackageTest {
         ShipmentPackage shipmentPackage = new ShipmentPackage("PKG1", 100.00, 15, 5);
         Offer ofr001 = new Offer("OFR001", 10);
         Offer ofr002 = new Offer("OFR002", 7);
-        shipmentPackage.apply(ofr001);
-        shipmentPackage.apply(ofr002);
+        shipmentPackage.applyOffer(ofr001);
+        shipmentPackage.applyOffer(ofr002);
         Double deliveryCost = shipmentPackage.calculateDeliveryCost();
         assertEquals(230.175, deliveryCost);
     }
