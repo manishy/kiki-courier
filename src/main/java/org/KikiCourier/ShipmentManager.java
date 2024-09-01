@@ -9,7 +9,7 @@ public class ShipmentManager {
 
     public ShipmentPackage createShipment(String id, Double basePrice, int weight, int distanceInKm, String offerCode) {
         ShipmentPackage shipmentPackage = new ShipmentPackage(id, basePrice, weight, distanceInKm);
-        if (offerManager.isValidOffer(offerCode)) {
+        if (offerManager.isValidOffer(offerCode) && offerManager.isApplicable(offerCode, weight, distanceInKm)) {
             shipmentPackage.applyOffer(offerManager.getOfferBy(offerCode));
         }
 

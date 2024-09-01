@@ -12,13 +12,13 @@ class OfferManagerTest {
     @Test
     public void validateOffer_shouldReturnTrueIfOfferIsValid() {
         OfferManager offerManager = new OfferManager();
-        assertTrue(offerManager.validateOffer("OFR001"));
+        assertTrue(offerManager.isValidOffer("OFR001"));
     }
 
     @Test
     public void validateOffer_shouldReturnFalseIfOfferIsNotValid() {
         OfferManager offerManager = new OfferManager();
-        assertFalse(offerManager.validateOffer("OFR004"));
+        assertFalse(offerManager.isValidOffer("OFR004"));
     }
 
     @Test
@@ -33,5 +33,26 @@ class OfferManagerTest {
         OfferManager offerManager = new OfferManager();
         Offer offer = offerManager.getOfferBy("OFR004");
         assertNull(offer);
+    }
+
+    @Test
+    public void isApplicable_shouldNotReturnTrueIfOfferIsApplicable() {
+        OfferManager offerManager = new OfferManager();
+        boolean isApplicable = offerManager.isApplicable("OFR001", 100, 100);
+        assertTrue(isApplicable);
+    }
+
+    @Test
+    public void isApplicable_shouldNotReturnFalseIfOfferIsNotApplicable() {
+        OfferManager offerManager = new OfferManager();
+        boolean isApplicable = offerManager.isApplicable("OFR001", 500, 100);
+        assertFalse(isApplicable);
+    }
+
+    @Test
+    public void isApplicable_shouldNotReturnFalseIfOfferCodeIsNotFound() {
+        OfferManager offerManager = new OfferManager();
+        boolean isApplicable = offerManager.isApplicable("OFR005", 500, 100);
+        assertFalse(isApplicable);
     }
 }
