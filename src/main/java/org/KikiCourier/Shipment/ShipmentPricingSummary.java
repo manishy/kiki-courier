@@ -1,4 +1,4 @@
-package org.KikiCourier;
+package org.KikiCourier.Shipment;
 
 
 public class ShipmentPricingSummary {

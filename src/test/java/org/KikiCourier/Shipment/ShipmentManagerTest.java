@@ -1,7 +1,8 @@
-package org.KikiCourier;
+package org.KikiCourier.Shipment;
 
 import org.KikiCourier.Offer.IOffer;
 import org.KikiCourier.Offer.Offer;
+import org.KikiCourier.Offer.OfferManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

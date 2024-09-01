@@ -1,4 +1,6 @@
-package org.KikiCourier;
+package org.KikiCourier.Shipment;
+
+import org.KikiCourier.Offer.OfferManager;
 
 import java.util.List;
 

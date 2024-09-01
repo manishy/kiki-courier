@@ -1,5 +1,8 @@
 package org.KikiCourier;
 
+import org.KikiCourier.Offer.OfferManager;
+import org.KikiCourier.Shipment.ShipmentManager;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

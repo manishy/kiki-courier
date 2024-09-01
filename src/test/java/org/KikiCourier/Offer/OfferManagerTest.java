@@ -1,6 +1,5 @@
-package org.KikiCourier;
+package org.KikiCourier.Offer;
 
-import org.KikiCourier.Offer.IOffer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

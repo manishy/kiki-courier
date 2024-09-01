@@ -1,8 +1,4 @@
-package org.KikiCourier;
-
-import org.KikiCourier.Offer.IOffer;
-import org.KikiCourier.Offer.Offer;
-import org.KikiCourier.Offer.OfferRule;
+package org.KikiCourier.Offer;
 
 import java.util.HashSet;
 import java.util.Set;
