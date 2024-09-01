@@ -14,14 +14,20 @@ class OfferTest {
     }
 
     @Test
-    public void isValid_shouldReturnTrueIfOfferCodeIsValid() {
+    public void isValid_shouldReturnTrueIfOfferCodeIsNotNullAndValid() {
         Offer ofr01 = new Offer("OFR01", 4);
         assertTrue(ofr01.isValid("OFR01"));
     }
 
     @Test
-    public void isValid_shouldReturnFalseIfOfferCodeIsInValid() {
+    public void isValid_shouldReturnFalseIfOfferCodeIsNotNullAndInValid() {
         Offer ofr01 = new Offer("OFR01", 4);
+        assertFalse(ofr01.isValid("OFR02"));
+    }
+
+    @Test
+    public void isValid_shouldReturnFalseIfOfferCodeIsNull() {
+        Offer ofr01 = new Offer(null, 4);
         assertFalse(ofr01.isValid("OFR02"));
     }
 }

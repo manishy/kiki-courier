@@ -15,6 +15,6 @@ public class Offer implements IOffer {
     }
 
     public boolean isValid(String offerCode) {
-        return offerCode.equals(code);
+        return offerCode != null && offerCode.equals(code);
     }
 }
