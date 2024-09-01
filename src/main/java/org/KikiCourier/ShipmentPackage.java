@@ -22,7 +22,9 @@ public class ShipmentPackage {
     }
 
     public void applyOffer(Offer sheepmentOffer) {
-        offers.add(sheepmentOffer);
+        if (offers.size() == 0) {
+            offers.add(sheepmentOffer);
+        }
     }
 
     public Double calculateDeliveryCost() {
