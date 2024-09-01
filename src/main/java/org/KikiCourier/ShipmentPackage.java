@@ -1,7 +1,6 @@
 package org.KikiCourier;
 
 import org.KikiCourier.Offer.IOffer;
-import org.KikiCourier.Offer.Offer;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,17 +20,20 @@ public class ShipmentPackage {
         this.distanceInKm = distanceInKm;
     }
 
-    public void applyOffer(Offer sheepmentOffer) {
+    public void applyOffer(IOffer shipmentOffer) {
         if (offers.size() == 0) {
-            offers.add(sheepmentOffer);
+            offers.add(shipmentOffer);
         }
     }
 
     public Double calculateDeliveryCost() {
         Double deliveryCost = basePrice + (weight * 10) + (distanceInKm * 5);
+        Double discount = 0.0;
         for (IOffer offer : offers) {
-            deliveryCost -= offer.calculateDiscount(deliveryCost);
+            discount += offer.calculateDiscount(deliveryCost);
         }
-        return deliveryCost;
+        double actualCost = deliveryCost - discount;
+        System.out.printf("%s %.0f %.0f%n", id, discount, actualCost);
+        return actualCost;
     }
 }
