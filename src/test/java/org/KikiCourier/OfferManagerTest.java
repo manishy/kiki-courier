@@ -1,6 +1,6 @@
 package org.KikiCourier;
 
-import org.KikiCourier.Offer.Offer;
+import org.KikiCourier.Offer.IOffer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -24,14 +24,14 @@ class OfferManagerTest {
     @Test
     public void getOffer_shouldReturnOfferById() {
         OfferManager offerManager = new OfferManager();
-        Offer offer = offerManager.getOfferBy("OFR001");
+        IOffer offer = offerManager.getOfferBy("OFR001");
         assertTrue(offer.isValid("OFR001"));
     }
 
     @Test
     public void getOffer_shouldNotReturnOfferIfIdIsInvalid() {
         OfferManager offerManager = new OfferManager();
-        Offer offer = offerManager.getOfferBy("OFR004");
+        IOffer offer = offerManager.getOfferBy("OFR004");
         assertNull(offer);
     }
 

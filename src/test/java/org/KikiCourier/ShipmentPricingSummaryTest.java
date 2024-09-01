@@ -17,6 +17,6 @@ public class ShipmentPricingSummaryTest {
     @Test
     public void toString_shouldReturnDetailsInAProperFormat() {
         ShipmentPricingSummary result = new ShipmentPricingSummary("PKG2", 30.0, 120.0);
-        assertEquals("PKG2 30 120\n", result.toString());
+        assertEquals("PKG2 30 120", result.toString());
     }
 }

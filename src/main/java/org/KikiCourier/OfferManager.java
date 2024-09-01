@@ -1,5 +1,6 @@
 package org.KikiCourier;
 
+import org.KikiCourier.Offer.IOffer;
 import org.KikiCourier.Offer.Offer;
 import org.KikiCourier.Offer.OfferRule;
 
@@ -21,11 +22,11 @@ public class OfferManager {
     }
 
     public boolean isApplicable(String offerCode, int weight, int distanceInKm) {
-        Offer offer = getOfferBy(offerCode);
+        IOffer offer = getOfferBy(offerCode);
         return offer != null && offer.isApplicable(weight, distanceInKm);
     }
 
-    public Offer getOfferBy(String offerCode) {
+    public IOffer getOfferBy(String offerCode) {
         return availableOffers.stream().filter(offer -> offer.isValid(offerCode)).findFirst().orElse(null);
     }
 }

@@ -26,6 +26,6 @@ public class ShipmentPricingSummary {
 
     @Override
     public String toString() {
-        return String.format("%s %.0f %.0f%n", id, discount, actualCost);
+        return String.format("%s %.0f %.0f", id, discount, actualCost);
     }
 }
