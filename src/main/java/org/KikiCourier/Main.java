@@ -1,19 +1,28 @@
 package org.KikiCourier;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
-        // Press Opt+Enter with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        try {
+            Path inputFilePath = Paths.get(args[0]);
+            List<String> instructions = Files.readAllLines(inputFilePath);
+            String baseInstruction = instructions.get(0);
 
-        // Press Ctrl+R or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
-
-            // Press Ctrl+D to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Cmd+F8.
-            System.out.println("i = " + i);
+            List<String> shipmentInstructions = instructions.subList(1, instructions.size());
+            double baseDeliveryCost = parseBaseDeliveryCost(baseInstruction);
+            ShipmentManager shipmentManager = new ShipmentManager(new OfferManager(), baseDeliveryCost);
+            shipmentManager.processShipments(shipmentInstructions);
+        } catch (Exception e) {
+            System.out.println("SOMETHING_WENT_WRONG");
         }
+    }
+
+    private static double parseBaseDeliveryCost(String baseInstruction) {
+        String[] splitArgs = baseInstruction.split(" ");
+        return Double.parseDouble(splitArgs[0]);
     }
 }
