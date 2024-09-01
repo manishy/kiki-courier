@@ -21,19 +21,25 @@ public class ShipmentPackage {
     }
 
     public void applyOffer(IOffer shipmentOffer) {
-        if (offers.size() == 0) {
+        if (offers.isEmpty()) {
             offers.add(shipmentOffer);
         }
     }
 
-    public Double calculateDeliveryCost() {
-        Double deliveryCost = basePrice + (weight * 10) + (distanceInKm * 5);
-        Double discount = 0.0;
-        for (IOffer offer : offers) {
-            discount += offer.calculateDiscount(deliveryCost);
-        }
-        double actualCost = deliveryCost - discount;
-        System.out.printf("%s %.0f %.0f%n", id, discount, actualCost);
-        return actualCost;
+    public ShipmentPricingSummary getShipmentPricing() {
+        Double deliveryCost = calculateBaseDeliveryCost();
+        Double totalDiscount = calculateTotalDiscount(deliveryCost);
+        Double actualCost = deliveryCost - totalDiscount;
+        return new ShipmentPricingSummary(id, totalDiscount, actualCost);
+    }
+
+    private Double calculateTotalDiscount(Double deliveryCost) {
+        return offers.stream()
+                .mapToDouble(offer -> offer.calculateDiscount(deliveryCost))
+                .sum();
+    }
+
+    private Double calculateBaseDeliveryCost() {
+        return basePrice + (weight * 10) + (distanceInKm * 5);
     }
 }

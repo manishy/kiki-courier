@@ -11,8 +11,9 @@ class ShipmentManagerTest {
         OfferManager offerManager = new OfferManager();
         ShipmentManager shipmentManager = new ShipmentManager(offerManager);
         ShipmentPackage shipment = shipmentManager.createShipment("ID1", 100.00, 20, 120, null);
-        Double deliveryCost = shipment.calculateDeliveryCost();
-        assertEquals(900.0, deliveryCost);
+        ShipmentPricingSummary shipmentPricing = shipment.getShipmentPricing();
+        assertEquals(900.0, shipmentPricing.getActualCost());
+        assertEquals(0.0, shipmentPricing.getDiscount());
     }
 
     @Test
@@ -20,7 +21,8 @@ class ShipmentManagerTest {
         OfferManager offerManager = new OfferManager();
         ShipmentManager shipmentManager = new ShipmentManager(offerManager);
         ShipmentPackage shipment = shipmentManager.createShipment("ID1", 100.00, 20, 120, "OFR001");
-        Double deliveryCost = shipment.calculateDeliveryCost();
-        assertEquals(810.0, deliveryCost);
+        ShipmentPricingSummary shipmentPricing = shipment.getShipmentPricing();
+        assertEquals(810.0, shipmentPricing.getActualCost());
+        assertEquals(90.0, shipmentPricing.getDiscount());
     }
 }
