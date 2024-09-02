@@ -33,6 +33,13 @@ public class ShipmentPackage {
         return new ShipmentPricingSummary(id, totalDiscount, actualCost);
     }
 
+    public int getWeightInKg() {
+        return weight;
+    }
+    public int getDistanceInKm() {
+        return distanceInKm;
+    }
+
     private Double calculateTotalDiscount(Double deliveryCost) {
         return offers.stream()
                 .mapToDouble(offer -> offer.calculateDiscount(deliveryCost))

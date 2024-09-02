@@ -6,6 +6,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ShipmentPackageTest {
+
+    @Test
+    public void shouldInitialiseValues() {
+        ShipmentPackage shipmentPackage = new ShipmentPackage("PKG1", 100.00, 15, 5);
+        assertEquals(15, shipmentPackage.getWeightInKg());
+        assertEquals(5, shipmentPackage.getDistanceInKm());
+    }
+
     @Test
     public void getShipmentPricing_shouldCalculateDeliveryCostWhenNoOfferIsApplied() {
         ShipmentPackage shipmentPackage = new ShipmentPackage("PKG1", 100.00, 15, 5);
