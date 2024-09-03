@@ -1,52 +1,48 @@
 package org.KikiCourier.Vehicle;
 
-import org.KikiCourier.Shipment.Shipment;
 import org.KikiCourier.Shipment.ShipmentPackage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VehicleTest {
     Vehicle vehicle;
+    ShipmentPackage shipmentPackage;
 
     @BeforeEach
     void setUp() {
         vehicle = new Vehicle(10, 100);
+        shipmentPackage = new ShipmentPackage("ID1", 12.0, 80, 100);
     }
 
     @Test
-    void setNextAvailableTime_shouldSetNextAvailableTimeForTheVehicle() {
-        vehicle.setNextAvailableTime(10.00);
-        assertEquals(10.00, vehicle.getNextAvailableTime());
+    void loadPackage_shouldReturnTrueIfPackageIsLoaded() {
+        assertTrue(vehicle.loadPackage(shipmentPackage));
     }
 
     @Test
-    void calculateTripTime_shouldCalculateTripTimeForAGivenDistance() {
-        double tripTime = vehicle.calculateTripTime(120);
-        assertEquals(24, tripTime);
+    void loadPackage_shouldReturnFalseIfPackageWeightIsMoreThanTheCurrentlyLoadedShipmentPackagesWeight() {
+        vehicle.loadPackage(shipmentPackage);
+        assertFalse(vehicle.loadPackage(new ShipmentPackage("ID2", 12.0, 50, 100)));
     }
 
     @Test
-    void canLoad_shouldReturnTrueIfVehicleCanLoadTheWeight() {
-        assertTrue(vehicle.canLoad(90));
+    void completeShipment_shouldSetTheVehicleAvailabilityBasedOnThePackages() {
+        vehicle.loadPackage(shipmentPackage);
+
+        vehicle.completeShipment();
+
+        assertEquals(20.0, vehicle.getNextAvailabilityInHour());
     }
 
     @Test
-    void canLoad_shouldReturnFalseIfVehicleCannotLoadTheWeight() {
-        assertFalse(vehicle.canLoad(110));
-    }
+    void updateEstimatedTimeInPackages_shouldUpdateDeliveryTimeInPackages() {
+        vehicle.loadPackage(shipmentPackage);
+        vehicle.updateEstimatedTimeInPackages();
 
-    @Test
-    void calculateEstimatedDeliveryTime_shouldCalculateDeliveryTime() {
-        ShipmentPackage shipmentPackage1 = new ShipmentPackage("ID1", 20.0, 100, 120);
-        ShipmentPackage shipmentPackage2 = new ShipmentPackage("ID2", 20.0, 100, 135);
-        List<ShipmentPackage> packages = Arrays.asList(shipmentPackage1, shipmentPackage2);
-        Shipment shipment = new Shipment(packages);
-        double estimatedDeliveryTime = vehicle.calculateEstimatedDeliveryTime(shipment);
-        assertEquals(13.5, estimatedDeliveryTime);
+        assertEquals("ID1 0 1312 10.00", shipmentPackage.toString());
     }
 }
