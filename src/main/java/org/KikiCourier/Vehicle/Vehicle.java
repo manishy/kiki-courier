@@ -3,6 +3,9 @@ package org.KikiCourier.Vehicle;
 import org.KikiCourier.Shipment.Shipment;
 import org.KikiCourier.Shipment.ShipmentPackage;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class Vehicle {
     private final double maxSpeed;
     private final int maxCarriableWeight;
@@ -15,7 +18,8 @@ public class Vehicle {
         this.nextAvailableTime = 0.0;
     }
     public double getNextAvailableTime() {
-        return nextAvailableTime;
+        BigDecimal bigDecimal = new BigDecimal(nextAvailableTime).setScale(2, RoundingMode.HALF_UP);
+        return bigDecimal.doubleValue();
     }
 
     public void setNextAvailableTime(double nextAvailableTime) {

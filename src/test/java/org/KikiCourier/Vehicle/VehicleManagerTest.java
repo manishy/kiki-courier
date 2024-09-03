@@ -1,7 +1,13 @@
 package org.KikiCourier.Vehicle;
 
+import org.KikiCourier.Shipment.Shipment;
+import org.KikiCourier.Shipment.ShipmentPackage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,5 +42,17 @@ class VehicleManagerTest {
         Vehicle availableVehicle = vehicleManager.getAvailableVehicle();
         assertEquals(10.0, availableVehicle.getNextAvailableTime());
         assertNotNull(availableVehicle);
+    }
+
+    @Test
+    void completeShipment_shouldCompleteTheShipmentAndUpdateTheVehicleAvailability() {
+        Vehicle availableVehicle = vehicleManager.getAvailableVehicle();
+        ShipmentPackage shipmentPackage1 = new ShipmentPackage("ID1", 20.0, 100, 120);
+        List<ShipmentPackage> shipmentPackages = Collections.singletonList(shipmentPackage1);
+        Shipment shipment = new Shipment(shipmentPackages);
+        vehicleManager.completeShipment( shipment, availableVehicle);
+
+        double nextAvailableTime = availableVehicle.getNextAvailableTime();
+        assertEquals(3.43, nextAvailableTime);
     }
 }
