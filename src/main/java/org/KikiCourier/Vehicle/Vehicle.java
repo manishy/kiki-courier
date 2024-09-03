@@ -1,15 +1,12 @@
 package org.KikiCourier.Vehicle;
 
+import org.KikiCourier.Shipment.Shipment;
 import org.KikiCourier.Shipment.ShipmentPackage;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Vehicle {
     private final double maxSpeed;
     private final int maxCarriableWeight;
 
-    private final List<ShipmentPackage> shipmentPackages = new ArrayList<>();
     private double nextAvailableTime;
 
     public Vehicle(double maxSpeed, int maxCarriableWeight) {
@@ -17,7 +14,6 @@ public class Vehicle {
         this.maxCarriableWeight = maxCarriableWeight;
         this.nextAvailableTime = 0.0;
     }
-
     public double getNextAvailableTime() {
         return nextAvailableTime;
     }
@@ -29,20 +25,16 @@ public class Vehicle {
     public double calculateTripTime(int distance) {
         return (2.0 * distance) / maxSpeed;
     }
-
-    public boolean loadPackage(ShipmentPackage shipmentPackage) {
-        float currentWeight = shipmentPackages.stream().map(ShipmentPackage::getWeightInKg).reduce(0, Integer::sum);
-        if (shipmentPackage.getWeightInKg() + currentWeight <= maxCarriableWeight) {
-            return shipmentPackages.add(shipmentPackage);
-        }
-        return false;
+    public boolean canLoad(int weight) {
+        return weight <= maxCarriableWeight;
     }
 
-    public void unloadPackages() {
-        shipmentPackages.clear();
-    }
-
-    public List<ShipmentPackage> getShipmentPackages() {
-        return shipmentPackages;
+    public double calculateEstimatedDeliveryTime(Shipment shipment) {
+        int maxDistance = shipment.getPackages().stream()
+                .mapToInt(ShipmentPackage::getDistanceInKm)
+                .max()
+                .orElse(0);
+        double tripTime = maxDistance / maxSpeed;
+        return nextAvailableTime + tripTime;
     }
 }
