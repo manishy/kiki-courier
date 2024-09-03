@@ -40,6 +40,10 @@ public class ShipmentPackage {
         return distanceInKm;
     }
 
+    public String getId() {
+        return id;
+    }
+
     private Double calculateTotalDiscount(Double deliveryCost) {
         return offers.stream()
                 .mapToDouble(offer -> offer.calculateDiscount(deliveryCost))

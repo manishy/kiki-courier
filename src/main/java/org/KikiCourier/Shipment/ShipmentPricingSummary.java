@@ -20,7 +20,7 @@ public class ShipmentPricingSummary {
         return discount;
     }
 
-    public Double getActualCost() {
+    public Double getTotalCost() {
         return actualCost;
     }
 

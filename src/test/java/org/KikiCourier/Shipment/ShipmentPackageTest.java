@@ -18,7 +18,7 @@ class ShipmentPackageTest {
     public void getShipmentPricing_shouldCalculateDeliveryCostWhenNoOfferIsApplied() {
         ShipmentPackage shipmentPackage = new ShipmentPackage("PKG1", 100.00, 15, 5);
         ShipmentPricingSummary shipmentPricing = shipmentPackage.getShipmentPricing();
-        assertEquals(275, shipmentPricing.getActualCost());
+        assertEquals(275, shipmentPricing.getTotalCost());
         assertEquals(0.0, shipmentPricing.getDiscount());
     }
 
@@ -28,7 +28,7 @@ class ShipmentPackageTest {
         Offer ofr001 = new Offer("OFR001", 10, null);
         shipmentPackage.applyOffer(ofr001);
         ShipmentPricingSummary shipmentPricing = shipmentPackage.getShipmentPricing();
-        assertEquals(247.5, shipmentPricing.getActualCost());
+        assertEquals(247.5, shipmentPricing.getTotalCost());
         assertEquals(27.5, shipmentPricing.getDiscount());
     }
 
@@ -40,7 +40,7 @@ class ShipmentPackageTest {
         shipmentPackage.applyOffer(ofr001);
         shipmentPackage.applyOffer(ofr002);
         ShipmentPricingSummary shipmentPricing = shipmentPackage.getShipmentPricing();
-        assertEquals(247.5, shipmentPricing.getActualCost());
+        assertEquals(247.5, shipmentPricing.getTotalCost());
         assertEquals(27.5, shipmentPricing.getDiscount());
     }
 }
