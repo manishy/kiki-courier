@@ -32,13 +32,20 @@ class ShipmentManagerTest {
     private final PrintStream standardErr = System.err;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
 
+    private final double BASE_PRICE = 100.00;
+
     @Mock
     private OfferManager offerManager;
+    private ShipmentManager shipmentManagerWithMockedOfferManager;
     private ShipmentManager shipmentManager;
+    VehicleManager vehicleManager;
+
 
     @BeforeEach
     public void setUp() {
-        shipmentManager = new ShipmentManager(offerManager, 100.00, new VehicleManager(2, 12.00, 130));
+        vehicleManager = new VehicleManager(2, 70.00, 200);
+        shipmentManager = new ShipmentManager(new OfferManager(), BASE_PRICE, vehicleManager);
+        shipmentManagerWithMockedOfferManager = new ShipmentManager(offerManager, BASE_PRICE, new VehicleManager(2, 12.00, 130));
         System.setErr(new PrintStream(outputStreamCaptor));
     }
 
@@ -62,7 +69,7 @@ class ShipmentManagerTest {
         when(offerManager.isApplicable("OFR002", 75, 125)).thenReturn(true);
         when(offerManager.getOfferBy("OFR002")).thenReturn(mockOffer);
 
-        shipmentManager.preparePackagesForShipment(instructions);
+        shipmentManagerWithMockedOfferManager.preparePackagesForShipment(instructions);
 
         verify(offerManager, times(2)).isValidOffer(anyString());
         verify(offerManager, times(2)).isApplicable(anyString(), anyInt(), anyInt());
@@ -76,7 +83,7 @@ class ShipmentManagerTest {
         when(offerManager.isValidOffer("OFR001")).thenReturn(true);
         when(offerManager.isApplicable("OFR001", 50, 100)).thenReturn(false);
 
-        shipmentManager.preparePackagesForShipment(instructions);
+        shipmentManagerWithMockedOfferManager.preparePackagesForShipment(instructions);
         verify(offerManager, times(0)).getOfferBy(anyString());
     }
 
@@ -86,7 +93,7 @@ class ShipmentManagerTest {
 
         when(offerManager.isValidOffer("INVALID")).thenReturn(false);
 
-        shipmentManager.preparePackagesForShipment(instructions);
+        shipmentManagerWithMockedOfferManager.preparePackagesForShipment(instructions);
 
         verify(offerManager).isValidOffer("INVALID");
         verify(offerManager, never()).getOfferBy(anyString());
@@ -95,31 +102,61 @@ class ShipmentManagerTest {
     @Test
     public void preparePackagesForShipment_shouldLogErrorIfInvalidShipmentDataProvided() {
         List<String> instructions = Collections.singletonList("PKG1 XYZ 100 OFR001");
-        assertDoesNotThrow(() -> shipmentManager.preparePackagesForShipment(instructions));
+        assertDoesNotThrow(() -> shipmentManagerWithMockedOfferManager.preparePackagesForShipment(instructions));
         assertEquals("Error processing shipment: PKG1 XYZ 100 OFR001\n", outputStreamCaptor.toString());
     }
 
     @Test
-    public void createShipmentPackagesWithEstimatedDeliveryTime_shouldCreateShipmentPackagesWithSameEstimatedDeliveryTimeIfShipmentsWeightDoesNotExceedTheMaxCarriableWeightForVehicles() {
-        List<String> instructions = Arrays.asList("PKG1 50 100 OFR001", "PKG2 50 125 OFR002");
+    public void createShipmentPackagesWithEstimatedDeliveryTime_shouldCreateShipmentPackages() {
+        shipmentManagerWithMockedOfferManager = new ShipmentManager(new OfferManager(), BASE_PRICE, vehicleManager);
 
-        when(offerManager.isValidOffer("OFR001")).thenReturn(false);
+        List<String> instructions = Arrays.asList(
+                "PKG1 50 30 OFR001",
+                "PKG2 75 125 OFFR0008",
+                "PKG3 175 100 OFR003",
+                "PKG4 110 60 OFR002",
+                "PKG5 155 95 NA"
+        );
 
-        shipmentManager.preparePackagesForShipment(instructions);
-        List<ShipmentPackage> shipmentPackages = shipmentManager.createShipmentPackagesWithEstimatedDeliveryTime();
-        assertEquals("PKG1 0 1100 10.42", shipmentPackages.get(0).toString());
-        assertEquals("PKG2 0 1225 10.42", shipmentPackages.get(1).toString());
+        shipmentManagerWithMockedOfferManager.preparePackagesForShipment(instructions);
+        List<ShipmentPackage> shipmentPackages = shipmentManagerWithMockedOfferManager.createShipmentPackagesWithEstimatedDeliveryTime();
+        assertEquals("PKG1 0 750 3.99", shipmentPackages.get(0).toString());
+        assertEquals("PKG2 0 1475 1.78", shipmentPackages.get(1).toString());
+        assertEquals("PKG3 0 2350 1.42", shipmentPackages.get(2).toString());
+        assertEquals("PKG4 105 1395 0.85", shipmentPackages.get(3).toString());
+        assertEquals("PKG5 0 2125 4.20", shipmentPackages.get(4).toString());
     }
 
     @Test
-    public void createShipmentPackagesWithEstimatedDeliveryTime_shouldCreateShipmentPackagesWithDifferentEstimatedDeliveryTimeIfShipmentsWeightIsExceedingTheMaxCarriableWeightForVehicles() {
-        List<String> instructions = Arrays.asList("PKG1 120 100 OFR001", "PKG2 50 125 OFR002");
+    public void createShipmentPackagesWithEstimatedDeliveryTime_shouldCreateShipmentPackagesWithTheSameWeight() {
+        List<String> instructions = Arrays.asList("PKG1 50 30 OFR001", "PKG2 50 125 OFFR0008");
+        shipmentManager.preparePackagesForShipment(instructions);
+        List<ShipmentPackage> shipmentPackages = shipmentManager.createShipmentPackagesWithEstimatedDeliveryTime();
 
-        when(offerManager.isValidOffer("OFR001")).thenReturn(false);
+        assertEquals("PKG1 0 750 0.42", shipmentPackages.get(0).toString());
+        assertEquals("PKG2 0 1225 1.78", shipmentPackages.get(1).toString());
+    }
+
+    @Test
+    public void createShipmentPackagesWithEstimatedDeliveryTime_shouldCreateShipmentPackagesWithoutEstimatedTimeIfNoVehicleIsAvailable() {
+        VehicleManager vehicleManager = new VehicleManager(0, 70.00, 200);
+        shipmentManager = new ShipmentManager(new OfferManager(), BASE_PRICE, vehicleManager);
+
+        List<String> instructions = Arrays.asList("PKG1 50 30 OFR001", "PKG2 75 125 OFFR0008");
 
         shipmentManager.preparePackagesForShipment(instructions);
         List<ShipmentPackage> shipmentPackages = shipmentManager.createShipmentPackagesWithEstimatedDeliveryTime();
-        assertEquals("PKG1 0 1800 8.33", shipmentPackages.get(0).toString());
-        assertEquals("PKG2 0 1225 10.42", shipmentPackages.get(1).toString());
+        assertEquals("PKG1 0 750 0.00", shipmentPackages.get(0).toString());
+        assertEquals("PKG2 0 1475 0.00", shipmentPackages.get(1).toString());
+    }
+
+    @Test
+    public void createShipmentPackagesWithEstimatedDeliveryTime_shouldCreateShipmentPackagesWithoutEstimatedTimeIfShipmentsHaveMoreWeightsThanVehicleCapacity() {
+        List<String> instructions = Arrays.asList("PKG1 50 30 OFR001", "PKG2 1000 125 OFFR0008");
+        shipmentManager.preparePackagesForShipment(instructions);
+        List<ShipmentPackage> shipmentPackages = shipmentManager.createShipmentPackagesWithEstimatedDeliveryTime();
+
+        assertEquals("PKG1 0 750 0.42", shipmentPackages.get(0).toString());
+        assertEquals("PKG2 0 10725 0.00", shipmentPackages.get(1).toString());
     }
 }

@@ -4,9 +4,9 @@ import org.KikiCourier.Shipment.ShipmentPackage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VehicleTest {
     Vehicle vehicle;
@@ -19,19 +19,8 @@ class VehicleTest {
     }
 
     @Test
-    void loadPackage_shouldReturnTrueIfPackageIsLoaded() {
-        assertTrue(vehicle.loadPackage(shipmentPackage));
-    }
-
-    @Test
-    void loadPackage_shouldReturnFalseIfPackageWeightIsMoreThanTheCurrentlyLoadedShipmentPackagesWeight() {
-        vehicle.loadPackage(shipmentPackage);
-        assertFalse(vehicle.loadPackage(new ShipmentPackage("ID2", 12.0, 50, 100)));
-    }
-
-    @Test
     void completeShipment_shouldSetTheVehicleAvailabilityBasedOnThePackages() {
-        vehicle.loadPackage(shipmentPackage);
+        vehicle.loadPackages(Collections.singletonList(shipmentPackage));
 
         vehicle.completeShipment();
 
@@ -40,7 +29,7 @@ class VehicleTest {
 
     @Test
     void updateEstimatedTimeInPackages_shouldUpdateDeliveryTimeInPackages() {
-        vehicle.loadPackage(shipmentPackage);
+        vehicle.loadPackages(Collections.singletonList(shipmentPackage));
         vehicle.updateEstimatedTimeInPackages();
 
         assertEquals("ID1 0 1312 10.00", shipmentPackage.toString());

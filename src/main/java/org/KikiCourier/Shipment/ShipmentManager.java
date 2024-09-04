@@ -1,10 +1,12 @@
 package org.KikiCourier.Shipment;
 
 import org.KikiCourier.Offer.OfferManager;
+import org.KikiCourier.Utils.ShipmentsGenerator;
 import org.KikiCourier.Vehicle.Vehicle;
 import org.KikiCourier.Vehicle.VehicleManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ShipmentManager {
@@ -33,12 +35,34 @@ public class ShipmentManager {
         });
         while (!shipmentPackages.isEmpty()) {
             Vehicle availableVehicle = vehicleManager.getAvailableVehicle();
-            shipmentPackages.removeIf(availableVehicle::loadPackage);
-            availableVehicle.updateEstimatedTimeInPackages();
-            vehicleManager.completeShipment(availableVehicle);
+            if (availableVehicle == null) {
+                System.out.println("Shipments can't be processed as no vehicle is available!");
+                break;
+            }
+            List<ShipmentPackage> optimalShipment = findOptimalShipment(availableVehicle.getMaxCarriableWeight());
+            if (!optimalShipment.isEmpty()) {
+                availableVehicle.loadPackages(optimalShipment);
+                availableVehicle.updateEstimatedTimeInPackages();
+                vehicleManager.completeShipment(availableVehicle);
+                shipmentPackages.removeAll(optimalShipment);
+            }
         }
         return shipments;
     }
+
+    private List<ShipmentPackage> findOptimalShipment(int maxCarriableWeight) {
+        List<ShipmentPackage> mostAppropriatePackage = Collections.emptyList();
+        List<List<ShipmentPackage>> allPossibleShipments = ShipmentsGenerator.getAllPossibleShipments(shipmentPackages);
+        for (List<ShipmentPackage> shipmentPackages : allPossibleShipments) {
+            int overallWeightOfPackage = shipmentPackages.stream().mapToInt(ShipmentPackage::getWeightInKg).sum();
+            int currentMaxWeight = mostAppropriatePackage.stream().mapToInt(ShipmentPackage::getWeightInKg).sum();
+            if (overallWeightOfPackage <= maxCarriableWeight && overallWeightOfPackage > currentMaxWeight) {
+                mostAppropriatePackage = shipmentPackages;
+            }
+        }
+        return mostAppropriatePackage;
+    }
+
 
     public void preparePackagesForShipment(List<String> instructions) {
         for (String instruction : instructions) {

@@ -5,6 +5,7 @@ import org.KikiCourier.Shipment.ShipmentPackage;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Vehicle {
@@ -21,17 +22,12 @@ public class Vehicle {
         this.nextAvailableTime = 0.0;
     }
 
-    public boolean loadPackage(ShipmentPackage shipmentPackage) {
-        float currentWeight = shipmentPackages.stream().map(ShipmentPackage::getWeightInKg).reduce(0, Integer::sum);
-        if (shipmentPackage.getWeightInKg() + currentWeight <= maxCarriableWeight) {
-            return shipmentPackages.add(shipmentPackage);
-        }
-        return false;
+    public void loadPackages(List<ShipmentPackage> optimalPackages) {
+        shipmentPackages.addAll(optimalPackages);
     }
 
     public double getNextAvailabilityInHour() {
-        BigDecimal bigDecimal = new BigDecimal(nextAvailableTime).setScale(2, RoundingMode.HALF_UP);
-        return bigDecimal.doubleValue();
+        return truncateToTwoDecimalPlaces(nextAvailableTime);
     }
 
     public void completeShipment() {
@@ -40,10 +36,14 @@ public class Vehicle {
     }
 
     public void updateEstimatedTimeInPackages() {
-        double estimatedDeliveryTime = calculateEstimatedDeliveryTime();
         for (ShipmentPackage shipmentPackage : shipmentPackages) {
+            double estimatedDeliveryTime = calculateEstimatedDeliveryTime(shipmentPackage.getDistanceInKm());
             shipmentPackage.setEstimatedDeliveryTime(estimatedDeliveryTime);
+            System.out.println(shipmentPackage);
         }
+    }
+    public int getMaxCarriableWeight(){
+        return maxCarriableWeight;
     }
 
     private void unloadPackages() {
@@ -57,7 +57,7 @@ public class Vehicle {
                 .orElse(0);
 
         double tripTime = calculateTripTime(maxDistance);
-        setNextAvailableTime(getNextAvailabilityInHour() + tripTime);
+        setNextAvailableTime(Double.sum(getNextAvailabilityInHour(), tripTime));
     }
 
     private void setNextAvailableTime(double nextAvailableTime) {
@@ -65,16 +65,17 @@ public class Vehicle {
     }
 
     private double calculateTripTime(int distance) {
-        return (2.0 * distance) / maxSpeed;
+        double tripTime = (2.0 * distance) / maxSpeed;
+        double toTwoDecimalPlaces = truncateToTwoDecimalPlaces(tripTime);
+        return Double.sum(nextAvailableTime, toTwoDecimalPlaces);
     }
 
-    private double calculateEstimatedDeliveryTime() {
-        int maxDistance = shipmentPackages.stream()
-                .mapToInt(ShipmentPackage::getDistanceInKm)
-                .max()
-                .orElse(0);
-        double tripTime = maxDistance / maxSpeed;
-        BigDecimal bigDecimal = new BigDecimal(nextAvailableTime + tripTime).setScale(2, RoundingMode.HALF_UP);
-        return bigDecimal.doubleValue();
+    private double calculateEstimatedDeliveryTime(int distance) {
+        double tripTime = distance / maxSpeed;
+        return Double.sum(truncateToTwoDecimalPlaces(tripTime), nextAvailableTime);
+    }
+
+    private double truncateToTwoDecimalPlaces(double value) {
+        return new BigDecimal(value).setScale(2, RoundingMode.DOWN).doubleValue();
     }
 }

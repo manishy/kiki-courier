@@ -4,7 +4,11 @@ import org.KikiCourier.Shipment.ShipmentPackage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class VehicleManagerTest {
 
@@ -32,9 +36,9 @@ class VehicleManagerTest {
     @Test
     void completeShipment_shouldCompleteTheShipmentAndUpdateTheVehicleAvailability() {
         Vehicle availableVehicle = vehicleManager.getAvailableVehicle();
-        availableVehicle.loadPackage(new ShipmentPackage("ID1", 12.0, 80, 100));
+        availableVehicle.loadPackages(Collections.singletonList(new ShipmentPackage("ID1", 12.0, 80, 100)));
         vehicleManager.completeShipment(availableVehicle);
 
-        assertEquals(2.86, availableVehicle.getNextAvailabilityInHour());
+        assertEquals(2.85, availableVehicle.getNextAvailabilityInHour());
     }
 }
