@@ -39,7 +39,6 @@ public class Vehicle {
         for (ShipmentPackage shipmentPackage : shipmentPackages) {
             double estimatedDeliveryTime = calculateEstimatedDeliveryTime(shipmentPackage.getDistanceInKm());
             shipmentPackage.setEstimatedDeliveryTime(estimatedDeliveryTime);
-            System.out.println(shipmentPackage);
         }
     }
     public int getMaxCarriableWeight(){

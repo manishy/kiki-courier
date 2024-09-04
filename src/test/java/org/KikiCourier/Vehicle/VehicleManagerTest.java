@@ -19,7 +19,7 @@ class VehicleManagerTest {
 
     @BeforeEach
     void setUp() {
-        vehicleManager = new VehicleManager(NUMBER_OF_VEHICLES, MAX_SPEED, MAX_CARRIABLE_WEIGHT);
+        vehicleManager = VehicleManager.create(new String[]{String.valueOf(NUMBER_OF_VEHICLES), String.valueOf(MAX_SPEED), String.valueOf(MAX_CARRIABLE_WEIGHT)});
     }
 
     @Test
@@ -29,7 +29,7 @@ class VehicleManagerTest {
 
     @Test
     public void getAvailableVehicle_shouldNotReturnAnyAvailableVehicleIfNotAvailable() {
-        vehicleManager = new VehicleManager(0, MAX_SPEED, MAX_CARRIABLE_WEIGHT);
+        VehicleManager vehicleManager = VehicleManager.create(new String[]{"0", String.valueOf(MAX_SPEED), String.valueOf(MAX_CARRIABLE_WEIGHT)});
         assertNull(vehicleManager.getAvailableVehicle());
     }
 

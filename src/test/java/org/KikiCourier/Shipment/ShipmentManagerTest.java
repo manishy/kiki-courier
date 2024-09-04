@@ -43,9 +43,9 @@ class ShipmentManagerTest {
 
     @BeforeEach
     public void setUp() {
-        vehicleManager = new VehicleManager(2, 70.00, 200);
+        vehicleManager = VehicleManager.create(new String[]{"2", "70", "200"});
         shipmentManager = new ShipmentManager(new OfferManager(), BASE_PRICE, vehicleManager);
-        shipmentManagerWithMockedOfferManager = new ShipmentManager(offerManager, BASE_PRICE, new VehicleManager(2, 12.00, 130));
+        shipmentManagerWithMockedOfferManager = new ShipmentManager(offerManager, BASE_PRICE, VehicleManager.create(new String[]{"2", "12", "130"}));
         System.setErr(new PrintStream(outputStreamCaptor));
     }
 
@@ -139,7 +139,7 @@ class ShipmentManagerTest {
 
     @Test
     public void createShipmentPackagesWithEstimatedDeliveryTime_shouldCreateShipmentPackagesWithoutEstimatedTimeIfNoVehicleIsAvailable() {
-        VehicleManager vehicleManager = new VehicleManager(0, 70.00, 200);
+        VehicleManager vehicleManager = VehicleManager.create(new String[]{"0", "70", "200"});
         shipmentManager = new ShipmentManager(new OfferManager(), BASE_PRICE, vehicleManager);
 
         List<String> instructions = Arrays.asList("PKG1 50 30 OFR001", "PKG2 75 125 OFFR0008");
