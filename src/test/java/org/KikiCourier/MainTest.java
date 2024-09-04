@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MainTest {
 
@@ -25,15 +25,23 @@ class MainTest {
     }
 
     @Test
-    void mainShouldExecuteCommandsProvidedFromFile() {
-        Main.main(new String[]{"src/test/resources/test_input1.txt"});
-        assertEquals("PKG1 0 175\n" +
-                "PKG2 0 275\n" +
-                "PKG3 35 665\n", outputStreamCaptor.toString());
+    void main_ShouldExecuteCommandsProvidedFromFileAndPrintOutput() {
+        Main.main(new String[]{"src/test/resources/test_input.txt"});
+        assertEquals("PKG1 0 750 3.99\n" +
+                "PKG2 0 1475 1.78\n" +
+                "PKG3 0 2350 1.42\n" +
+                "PKG4 105 1395 0.85\n" +
+                "PKG5 0 2125 4.20\n", outputStreamCaptor.toString());
     }
 
     @Test
-    void mainShouldPrintErrorIfAnyExceptionWasThrown() {
+    void main_ShouldPrintWarningLogsIfNoInputIsProvided() {
+        Main.main(new String[]{});
+        assertEquals("No input file provided.\n", outputStreamCaptor.toString());
+    }
+
+    @Test
+    void main_ShouldPrintErrorIfAnyExceptionWasThrown() {
         String testInputPath = "src/test/resources/invalid_file.txt";
         Main.main(new String[]{testInputPath});
         assertEquals("SOMETHING_WENT_WRONG\n", outputStreamCaptor.toString());
